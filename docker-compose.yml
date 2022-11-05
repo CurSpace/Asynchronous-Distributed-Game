@@ -19,6 +19,12 @@ services:
     container_name: Trainer2
     networks:
      - default
+  train3:
+    build: .
+    hostname: trainer3
+    container_name: Trainer3
+    networks:
+     - default
   poke1:
     build: .
     hostname: pokemon1
@@ -29,5 +35,23 @@ services:
     build: .
     hostname: pokemon2
     container_name: Pokemon2
+    networks:
+     - default
+  poke3:
+    build: .
+    hostname: pokemon3
+    container_name: Pokemon3
+    networks:
+     - default
+  poke4:
+    build: .
+    hostname: pokemon4
+    container_name: Pokemon4
+    networks:
+     - default
+  poke5:
+    build: .
+    hostname: pokemon5
+    container_name: Pokemon5
     networks:
      - default
