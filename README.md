@@ -49,7 +49,7 @@ trainerCheck()
 	- Relays the move to the server which triggers the moves() function to update the 2d array.
 	
 reportMove()
-	-reports move to server.
+	-reports the pokemon or trainer's move to server.
 
  
 Pokedex() 
@@ -74,7 +74,7 @@ pokePath()
 
 ## function that are services.
 
-	- Using a rpc function are used when interaction between server the trainer or pokemon is requires.
+	- Using a rpc functions when interaction between server the trainer or pokemon is requires.
 
 
 - trainerCheck(Position) and pokemonCheck(Position) is used by the trainers and pokemons to check their surrounding spaces.
@@ -84,8 +84,13 @@ pokePath()
 - reportMove(Position) is used by the pokemon and the trainer to report their position to the server their position after the move.
 
 
+## rpc messages
 
-
+	- cFlag - is a boolean value indicates if a pokemon has been captured.
+	- Position - is a pair of int32s that idicate the position of the pokemon or the trainer.
+	- Space - is a value of type position.
+	- Sapces - is an array of spaces.
+	- Valid - is the boolean value given to the pokemon or trainer to validate a move.
 
 
 
