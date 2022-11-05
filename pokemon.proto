@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+service serverService{
+	rpc trainerCheck(Position) returns(Spaces);
+	rpc pokemonCheck(Position) returns(Spaces);
+	rpc captured(Position) returns(cFlag);
+	rpc reportMove(Position) returns(Valid);
+}
+
+message cFlag{
+	bool flag = 1; 
+}
+
+message Position{
+	int32 row = 1;
+	int32 col = 2;
+}
+
+message Space{
+	Position space = 1; 
+}
+
+message Spaces{
+	repeated Space spaces = 1;
+}
+
+message Valid{
+	bool flag1 = 1;
+}

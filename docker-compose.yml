@@ -1,0 +1,33 @@
+version: '3.7'
+
+services:
+  server:
+    build: .
+    hostname: server
+    container_name: Server
+    networks:
+    - default
+  train1:
+    build: .
+    hostname: trainer1
+    container_name: Trainer1
+    networks:
+     - default
+  train2:
+    build: .
+    hostname: trainer2
+    container_name: Trainer2
+    networks:
+     - default
+  poke1:
+    build: .
+    hostname: pokemon1
+    container_name: Pokemon1
+    networks:
+     - default
+  poke2:
+    build: .
+    hostname: pokemon2
+    container_name: Pokemon2
+    networks:
+     - default
