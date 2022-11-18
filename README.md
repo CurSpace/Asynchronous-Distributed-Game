@@ -27,6 +27,15 @@ The .proto will have the services and messages that need to be passed between th
 
 ## Description of functions 
 
+createBoard(N)
+	- Creates and initializes the board by placing the trainers and pokemons randomly on the board.
+	
+printBoard(board,N)
+	- Prints the intial board wiht proper formatting.
+	
+run_server()
+	- Server function that calls createBoard and printBoard.
+	
 captured(Position)
 	- Return a boolean value to the pokemon. 0 means that the pokemon is free and can move. 1 means it has 
 	been captured by the trainer.
