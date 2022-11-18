@@ -28,12 +28,17 @@ The .proto will have the services and messages that need to be passed between th
 ## Description of functions 
 
 createBoard(N)
+
 	- Creates and initializes the board by placing the trainers and pokemons randomly on the board.
+	- Takes N which is the board size as input.
+	- returns the initialized board.
 	
 printBoard(board,N)
+
 	- Prints the intial board wiht proper formatting.
-	
+	- Takes board size N and the 2d array board as input.
 run_server()
+
 	- Server function that calls createBoard and printBoard.
 	
 captured(Position)
@@ -41,6 +46,7 @@ captured(Position)
 	been captured by the trainer.
 
 moves() 
+	
 	- Keeps track of all the elements(trainers on the board). 
 
 	- Prints the board which is a 2d array to the screen. 
