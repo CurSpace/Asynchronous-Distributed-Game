@@ -92,7 +92,9 @@ pokePath()
 	- Sapces - is an array of spaces.
 	- Valid - is the boolean value given to the pokemon or trainer to validate a move.
 
+## Version1 gif:
 
+![Alt Text](https://github.com/CurSpace/cs5113fa22-project/blob/82b62e84ace7a199297ce396b75560258f69ec66/version1.gif)
 
 
 
