@@ -27,26 +27,11 @@ The .proto will have the services and messages that need to be passed between th
 
 ## Description of functions 
 
-createBoard(N)
-
-	- Creates and initializes the board by placing the trainers and pokemons randomly on the board.
-	- Takes N which is the board size as input.
-	- returns the initialized board.
-	
-printBoard(board,N)
-
-	- Prints the intial board wiht proper formatting.
-	- Takes board size N and the 2d array board as input.
-run_server()
-
-	- Server function that calls createBoard and printBoard.
-	
 captured(Position)
 	- Return a boolean value to the pokemon. 0 means that the pokemon is free and can move. 1 means it has 
 	been captured by the trainer.
 
 moves() 
-	
 	- Keeps track of all the elements(trainers on the board). 
 
 	- Prints the board which is a 2d array to the screen. 
@@ -107,9 +92,7 @@ pokePath()
 	- Sapces - is an array of spaces.
 	- Valid - is the boolean value given to the pokemon or trainer to validate a move.
 
-## Version1 gif:
 
-![Alt Text](https://github.com/CurSpace/cs5113fa22-project/blob/82b62e84ace7a199297ce396b75560258f69ec66/version1.gif)
 
 
 
