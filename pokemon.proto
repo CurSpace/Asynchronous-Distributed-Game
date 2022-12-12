@@ -1,12 +1,15 @@
 syntax = "proto3";
 
 service serverService{
-	rpc trainerCheck(Position) returns(Spaces);
+	rpc trainerCheck(your_name) returns(Spaces);
 	rpc pokemonCheck(Position) returns(Spaces);
 	rpc captured(Position) returns(cFlag);
 	rpc reportMove(Position) returns(Valid);
 }
 
+message your_name{
+	string name = 1;
+}
 message cFlag{
 	bool flag = 1; 
 }

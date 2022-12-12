@@ -42,4 +42,4 @@ EXPOSE 50050-50100
 ENV PYTHONUNBUFFERED=1
 
 # Run the node
-CMD ["python3", "node.py"]
+CMD ["python3", "test_node.py"]

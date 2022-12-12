@@ -1,6 +1,8 @@
 import json
 import random
 import socket
+import pokemon_pb2
+import pokemon_pb2_grpc
 
 global board
 def createBoard(N):
@@ -70,25 +72,14 @@ def check_surroundings():
             your_surroundings = [[i,j-1],[i-1,j],[i,j+1],[i+1,j],[i-1,j-1],[i-1,j+1],[i+1,j+1],[i+1,j-1]]
     return your_surroundings
 
-def pokemon_move():
-    pass
-
-def trainer_move():
-    pass
-
-def run_server():
-    with open('board_parameters.config') as config:
-        params = config.read()
-    board_parameters = json.loads(params)
-    N = board_parameters['N']
-    P = board_parameters['P']
-    T = board_parameters['T']
-    global board
-    createBoard(N) 
-    printBoard(N)
 
 def run_trainer():
     # add all trainer functionality
+    # these two line make the connection
+    # do everything under the with
+    with grpc.insecure_channel("server:50051") as channel:
+        stub = pokemon_pb2_grpc.serverServiceStub(object)
+         
 global board
 poks_near = []
 empty_spaces = []
@@ -132,6 +123,9 @@ else:
 
 def run_pokemon():
     # add all pokemon functionality
+    with grpc.insecure_channel("server:50051") as channel:
+        stub = pokemon_pb2_grpc.serverServiceStub(object)
+
     for i,move in enumerate(your_surroundings):
     if move[0] < 0 or move[1] < 0 or move[0] > N or move[1] > N:
         #print(move)
@@ -181,6 +175,47 @@ print("Valid Moves",valid_moves)
 print(your_surroundings)
 print(occupied_by_trainer)
 
+def pokemon_move():
+    pass
+
+def trainer_move():
+    pass
+
+# the class name is the name of the service in proto file
+
+class serverService(pokemon_pb2_grpc.serverServiceServicer) 
+    def trainerCheck(self, request, context):
+        pass
+
+    def pokemonCheck(self, request, context):
+        pass
+
+    def captured(self, request, context):
+        pass
+
+    def reportMove(self, request, context):
+        pass
+
+def run_server():
+    with open('board_parameters.config') as config:
+        params = config.read()
+    board_parameters = json.loads(params)
+    N = board_parameters['N']
+    P = board_parameters['P']
+    T = board_parameters['T']
+    global board
+    createBoard(N) 
+    printBoard(N)
+    server = grpc.server(concurrent.futures.ThreadPoolExecutor(max_workers=10))
+    guessing_game_pb2_grpc.add_GuessingGameServicer_to_server(GuessingGame(),server)
+    server.add_insecure_port('server:50051')
+    server.start()
+    try:
+        while True:
+            time.sleep(10)
+
+    except KeyboardInterrupt:
+        server.stop(0)
 def main():
     # read config
     name = socket.gethostname()
