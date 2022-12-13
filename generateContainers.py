@@ -31,11 +31,11 @@ def main():
     for i in range(1,args.T + 1):
         node_creator.write("\n  train"+str(i)+":\n    build: .\n    hostname: trainer"+str(i)+"\n    container_name: Trainer"+str(i)+"\n    networks:\n     - default")
         # appending to dict
-        pieces_dict['Trainer'+str(i)] = trainers[i]
+        pieces_dict['trainer'+str(i)] = trainers[i]
 
     for i in range(1,args.P + 1):
         node_creator.write("\n  poke"+str(i)+":\n    build: .\n    hostname: pokemon"+str(i)+"\n    container_name: Pokemon"+str(i)+"\n    networks:\n     - default")
-        pieces_dict['Pokemon'+str(i)] = pokemons[i]
+        pieces_dict['pokemon'+str(i)] = pokemons[i]
 
     node_creator.close()
     # storing as str because if i do dumps cannot print the emoji
