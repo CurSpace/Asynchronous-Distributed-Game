@@ -5,3 +5,5 @@ Also pointed asyncio gRPC for asynchronous messaging.
 
 https://stackoverflow.com/questions/52601350/insert-value-at-random-place-in-2d-list | helped randomly inserting the pokemon and trainers to the board
 
+https://grpc.github.io/grpc/python/grpc_asyncio.html # using asyncio gRPC
+
