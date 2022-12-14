@@ -113,4 +113,4 @@ Valid
 
 ## Output
 
-![Alt Text](https://media.giphy.com/media/vFKqnCdLPNOKc/giphy.gif)
+![Alt Text](https://github.com/CurSpace/cs5113fa22-project/blob/main/gif.mp4)
