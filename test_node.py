@@ -42,7 +42,6 @@ def createBoard(N):
 
             # initialize 
             if list(board_pieces.keys())[count].startswith('trainer') == True:
-                print("INSIDE")
                 pokedex[list(board_pieces.keys())[count]]= [] 
             count = count + 1
 
@@ -80,6 +79,7 @@ def printBoard(N):
         print()
         print(' ','_'*6*N)
         print()
+    time.sleep(1)
 
 def check_surroundings(hostname):
     your_surroundings = []
@@ -93,12 +93,10 @@ def check_surroundings(hostname):
                 #flatten list to send using rpc
     if len(your_surroundings) != 0:
         surroundings = [coordinate for position in your_surroundings for coordinate in position]
-    print(your_surroundings,surroundings)
     return surroundings, you_are_at
 
 
 async def run_trainer():
-    global board
     global num_pokemons
     global lock
     # add all trainer functionality
@@ -150,8 +148,6 @@ async def run_trainer():
                     move_to = []
                     captures = 0
             #Client sends its coice to server through the parameters 
-                print("Pokemons Left!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!11",num_pokemons)
-                print("AFTER sub", num_pokemons)
                 des = await stub.moveTrainer(pokemon_pb2.Decision(move2 = move_to, name = my_name,cur_pos1 = response.cur_pos, capture = captures),wait_for_ready=True)
             else:
                 pass
@@ -185,7 +181,6 @@ async def run_pokemon():
             # make decision using the lists here!!!!!!!!!!!!!!!!!!!!!!!!!11
             # has lock so proceed
             if response.loc1 == 0:
-                print(my_name)
                 if len(response.cur_posp) != 0:
 
             # convert to pairs
@@ -226,7 +221,6 @@ class serverService(pokemon_pb2_grpc.serverServiceServicer):
         poks_near_by = []
         my_pokemons = []
         you_are_at = []
-        print("Trainer host",request.name)        
         # take lock
         if lock == 1:
             lock = 0
@@ -260,8 +254,6 @@ class serverService(pokemon_pb2_grpc.serverServiceServicer):
                         empty_spaces.append(your_surroundings[i])
             
         
-            print("Empyt Space",empty_space)
-            print("Pokemons Near",poks_near_by)
         #flatten lists to send through rcp
             if len(empty_spaces) != 0:
                 empty_space = [coordinate for position in empty_spaces for coordinate in position]
@@ -294,7 +286,6 @@ class serverService(pokemon_pb2_grpc.serverServiceServicer):
         if request.capture == 1 and len(request.move2) != 0:
                 pokedex[request.name].append(board[request.move2[0]][request.move2[1]]) 
                 path_tracker[request.name].append(request.move2)
-                print(pokedex[request.name])
                 capture_locations[board[request.move2[0]][request.move2[1]]] = request.move2
                 board[request.move2[0]][request.move2[1]] = request.name
                 board[request.cur_pos1[0]][request.cur_pos1[1]] = 0
@@ -303,21 +294,18 @@ class serverService(pokemon_pb2_grpc.serverServiceServicer):
             path_tracker[request.name].append(request.move2)
             board[request.move2[0]][request.move2[1]] = request.name
             board[request.cur_pos1[0]][request.cur_pos1[1]] = 0
-            print("Trainer Moving")
-            print("Pokedex", pokedex)
-            print("Captured Locations", capture_locations)
-            print("NUMBER OF POKEMONS", num_pokemons)
         else: 
             pass
         printBoard(N)
-        print("Path Tracker",path_tracker)
+        print("Pokedex:", pokedex)
+        print("Captured Locations:", capture_locations)
+        print("Path:", path_tracker)
         # release lock
         lock = 1
         return(pokemon_pb2.Valid(move_status = 'moved!' ))
 
     def pokemonCheck(self, request, context):
         global lock
-        print("Trainer host",request.name)        
         invalid_moves = []
         occupied_by_trainer = []
         valid_before_distance = []
@@ -396,21 +384,16 @@ class serverService(pokemon_pb2_grpc.serverServiceServicer):
             path_tracker[request.name].append(request.move2)
             board[request.move2[0]][request.move2[1]] = request.name
             board[request.cur_pos1[0]][request.cur_pos1[1]] = 0
-            print("Pokemon Moving")
         else:
             pass
-        print("*****************************************************************8")
         printBoard(N)
+        print("Pokedex:", pokedex)
+        print("Captured Locations:", capture_locations)
+        print("Path:", path_tracker)
         # release loc
         lock = 1
-        print("Path Tracker",path_tracker)
         return(pokemon_pb2.Valid(move_status = 'moved!' ))
 
-    def captured(self, request, context):
-        pass
-
-    def reportMove(self, request, context):
-        pass
 
 global num_pokemons
 async def run_server():
@@ -426,7 +409,6 @@ async def run_server():
     global board
     num_pokemons = P
     createBoard(N) 
-    printBoard(N)
     # add server function to serverService class
     server = grpc.aio.server(concurrent.futures.ThreadPoolExecutor(max_workers=10))
     pokemon_pb2_grpc.add_serverServiceServicer_to_server(serverService(),server)
@@ -441,6 +423,9 @@ async def run_server():
         server.stop(0)
         '''
 def main():
+    global pokedex
+    global path_tracker
+    global capture_locations
     # read config
     name = socket.gethostname()
     if name == 'server':
@@ -453,3 +438,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+    

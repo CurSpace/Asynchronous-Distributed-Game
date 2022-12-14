@@ -5,15 +5,10 @@ service serverService{
 	rpc moveTrainer(Decision) returns(Valid);
 	rpc movePokemon(Decision) returns(Valid);
 	rpc pokemonCheck(your_name) returns(PSpaces);
-	rpc captured(Position) returns(cFlag);
-	rpc reportMove(Position) returns(Valid);
 }
 
 message your_name{
 	string name = 1;
-}
-message cFlag{
-	bool flag = 1; 
 }
 
 message Decision{
@@ -22,14 +17,7 @@ message Decision{
 	repeated int32 cur_pos1 = 3;
 	int32 capture = 4;
 }
-message Position{
-	int32 row = 1;
-	int32 col = 2;
-}
 
-message Space{
-	int32 list_ele = 1; 
-}
 
 message Spaces{
 	repeated int32 pokemons_near = 1;

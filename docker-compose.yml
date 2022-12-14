@@ -25,6 +25,144 @@ services:
     container_name: Trainer3
     networks:
      - default
+  train4:
+    build: .
+    hostname: trainer4
+    container_name: Trainer4
+    networks:
+     - default
+  train5:
+    build: .
+    hostname: trainer5
+    container_name: Trainer5
+    networks:
+     - default
+  train6:
+    build: .
+    hostname: trainer6
+    container_name: Trainer6
+    networks:
+     - default
+  train7:
+    build: .
+    hostname: trainer7
+    container_name: Trainer7
+    networks:
+     - default
+  train8:
+    build: .
+    hostname: trainer8
+    container_name: Trainer8
+    networks:
+     - default
+  train9:
+    build: .
+    hostname: trainer9
+    container_name: Trainer9
+    networks:
+     - default
+  train10:
+    build: .
+    hostname: trainer10
+    container_name: Trainer10
+    networks:
+     - default
+  train11:
+    build: .
+    hostname: trainer11
+    container_name: Trainer11
+    networks:
+     - default
+  train12:
+    build: .
+    hostname: trainer12
+    container_name: Trainer12
+    networks:
+     - default
+  train13:
+    build: .
+    hostname: trainer13
+    container_name: Trainer13
+    networks:
+     - default
+  train14:
+    build: .
+    hostname: trainer14
+    container_name: Trainer14
+    networks:
+     - default
+  train15:
+    build: .
+    hostname: trainer15
+    container_name: Trainer15
+    networks:
+     - default
+  train16:
+    build: .
+    hostname: trainer16
+    container_name: Trainer16
+    networks:
+     - default
+  train17:
+    build: .
+    hostname: trainer17
+    container_name: Trainer17
+    networks:
+     - default
+  train18:
+    build: .
+    hostname: trainer18
+    container_name: Trainer18
+    networks:
+     - default
+  train19:
+    build: .
+    hostname: trainer19
+    container_name: Trainer19
+    networks:
+     - default
+  train20:
+    build: .
+    hostname: trainer20
+    container_name: Trainer20
+    networks:
+     - default
+  train21:
+    build: .
+    hostname: trainer21
+    container_name: Trainer21
+    networks:
+     - default
+  train22:
+    build: .
+    hostname: trainer22
+    container_name: Trainer22
+    networks:
+     - default
+  train23:
+    build: .
+    hostname: trainer23
+    container_name: Trainer23
+    networks:
+     - default
+  train24:
+    build: .
+    hostname: trainer24
+    container_name: Trainer24
+    networks:
+     - default
+  train25:
+    build: .
+    hostname: trainer25
+    container_name: Trainer25
+    networks:
+     - default
+  train26:
+    build: .
+    hostname: trainer26
+    container_name: Trainer26
+    networks:
+     - default
   poke1:
     build: .
     hostname: pokemon1
@@ -41,5 +179,143 @@ services:
     build: .
     hostname: pokemon3
     container_name: Pokemon3
+    networks:
+     - default
+  poke4:
+    build: .
+    hostname: pokemon4
+    container_name: Pokemon4
+    networks:
+     - default
+  poke5:
+    build: .
+    hostname: pokemon5
+    container_name: Pokemon5
+    networks:
+     - default
+  poke6:
+    build: .
+    hostname: pokemon6
+    container_name: Pokemon6
+    networks:
+     - default
+  poke7:
+    build: .
+    hostname: pokemon7
+    container_name: Pokemon7
+    networks:
+     - default
+  poke8:
+    build: .
+    hostname: pokemon8
+    container_name: Pokemon8
+    networks:
+     - default
+  poke9:
+    build: .
+    hostname: pokemon9
+    container_name: Pokemon9
+    networks:
+     - default
+  poke10:
+    build: .
+    hostname: pokemon10
+    container_name: Pokemon10
+    networks:
+     - default
+  poke11:
+    build: .
+    hostname: pokemon11
+    container_name: Pokemon11
+    networks:
+     - default
+  poke12:
+    build: .
+    hostname: pokemon12
+    container_name: Pokemon12
+    networks:
+     - default
+  poke13:
+    build: .
+    hostname: pokemon13
+    container_name: Pokemon13
+    networks:
+     - default
+  poke14:
+    build: .
+    hostname: pokemon14
+    container_name: Pokemon14
+    networks:
+     - default
+  poke15:
+    build: .
+    hostname: pokemon15
+    container_name: Pokemon15
+    networks:
+     - default
+  poke16:
+    build: .
+    hostname: pokemon16
+    container_name: Pokemon16
+    networks:
+     - default
+  poke17:
+    build: .
+    hostname: pokemon17
+    container_name: Pokemon17
+    networks:
+     - default
+  poke18:
+    build: .
+    hostname: pokemon18
+    container_name: Pokemon18
+    networks:
+     - default
+  poke19:
+    build: .
+    hostname: pokemon19
+    container_name: Pokemon19
+    networks:
+     - default
+  poke20:
+    build: .
+    hostname: pokemon20
+    container_name: Pokemon20
+    networks:
+     - default
+  poke21:
+    build: .
+    hostname: pokemon21
+    container_name: Pokemon21
+    networks:
+     - default
+  poke22:
+    build: .
+    hostname: pokemon22
+    container_name: Pokemon22
+    networks:
+     - default
+  poke23:
+    build: .
+    hostname: pokemon23
+    container_name: Pokemon23
+    networks:
+     - default
+  poke24:
+    build: .
+    hostname: pokemon24
+    container_name: Pokemon24
+    networks:
+     - default
+  poke25:
+    build: .
+    hostname: pokemon25
+    container_name: Pokemon25
+    networks:
+     - default
+  poke26:
+    build: .
+    hostname: pokemon26
+    container_name: Pokemon26
     networks:
      - default
