@@ -111,6 +111,6 @@ Valid
 	- A google instance with 16 cores is used.
 
 
-## Output
+## Demo gif
 
 ![Alt Text](https://github.com/CurSpace/cs5113fa22-project/blob/main/media/demo.gif)
