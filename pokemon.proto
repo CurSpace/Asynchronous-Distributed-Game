@@ -36,12 +36,14 @@ message Spaces{
 	repeated int32 emt_spaces = 2 ;
 	int32 n_pokemons = 3;
 	repeated int32 cur_pos = 4;
+	int32 loc = 5;
 }
 
 message PSpaces{
 	repeated int32 valid_mov = 1;
 	repeated int32 valid_mov_before = 2 ;
 	repeated int32 cur_posp = 3;
+	int32 loc1 = 4;
 }
 message Valid{
 	string move_status = 1;

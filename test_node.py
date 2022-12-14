@@ -10,6 +10,10 @@ import asyncio
 
 global board
 global num_pokemons
+global pokedex
+global path_tracker
+global lock
+global capture_locations
 def createBoard(N):
     global board
     global pokedex 
@@ -37,12 +41,11 @@ def createBoard(N):
             path_tracker[list(board_pieces.keys())[count]] = [[x,y]]
 
             # initialize 
-            if list(board_pieces.values())[count][:-1] == 'trainer':
+            if list(board_pieces.keys())[count].startswith('trainer') == True:
+                print("INSIDE")
                 pokedex[list(board_pieces.keys())[count]]= [] 
             count = count + 1
 
-    print("Pokedex",pokedex)
-    print("Path Tracker", path_tracker)
     # store pokedex and path_tracker in a file for later use
     with open("pokedex.config",'w') as config1:
             config1.write(json.dumps(pokedex))
@@ -54,6 +57,10 @@ def createBoard(N):
 # function to display the board
 def printBoard(N):
     global board
+
+    with open('board_pieces.config') as config:
+        pieces = config.read()
+    board_pieces = json.loads(pieces)
     print(' ','_'*6*N)
     print()
     for i in range(len(board)):
@@ -61,13 +68,13 @@ def printBoard(N):
             if  j == N -1 and board[i][j] == 0 :
                 print('  | ',board[i][j],end = '  | ')
             elif j == N - 1:
-                print('  | ',board[i][j],end = ' |')
+                print('  | ',board_pieces[board[i][j]],end = ' |')
 
             elif board[i][j] == 0:
                 print('  | ',board[i][j],end = '')
             # pokemon or trainer
             else:
-                print('  |',board[i][j], end = '')
+                print('  |',board_pieces[board[i][j]], end = '')
 
         
         print()
@@ -77,10 +84,11 @@ def printBoard(N):
 def check_surroundings(hostname):
     your_surroundings = []
     surroundings = []
+    you_are_at = []
     for i in range(len(board)):
         for j in range(len(board[i])):
             if str(board[i][j]) == hostname:
-                you_are_at = (i,j)
+                you_are_at = [i,j]
                 your_surroundings = [[i,j-1],[i-1,j],[i,j+1],[i+1,j],[i-1,j-1],[i-1,j+1],[i+1,j+1],[i+1,j-1]]
                 #flatten list to send using rpc
     if len(your_surroundings) != 0:
@@ -92,6 +100,7 @@ def check_surroundings(hostname):
 async def run_trainer():
     global board
     global num_pokemons
+    global lock
     # add all trainer functionality
     # these two line make the connection
     # do everything under the with
@@ -111,41 +120,44 @@ async def run_trainer():
             response =  await stub.trainerCheck(pokemon_pb2.your_name(name=my_name),wait_for_ready=True)
             # only do this for the first iteratoin of the infinite loop
             num_pokemons = response.n_pokemons
+            if response.loc == 0:
             
             # convert to pairs
-            if len(response.pokemons_near) != 0:
-                poks_near = [[response.pokemons_near[i],response.pokemons_near[i+1]] for i in range(0, len(response.pokemons_near), 2)]
-            else:
-                poks_near = []
+                if len(response.pokemons_near) != 0:
+                    poks_near = [[response.pokemons_near[i],response.pokemons_near[i+1]] for i in range(0, len(response.pokemons_near), 2)]
+                else:
+                    poks_near = []
 
-            if len(response.emt_spaces) != 0:
-                empty_spaces = [[response.emt_spaces[i],response.emt_spaces[i+1]] for i in range(0, len(response.emt_spaces), 2)]
-            else:
-                empty_spaces = []
+                if len(response.emt_spaces) != 0:
+                    empty_spaces = [[response.emt_spaces[i],response.emt_spaces[i+1]] for i in range(0, len(response.emt_spaces), 2)]
+                else:
+                    empty_spaces = []
 
  # client makes choice
  
-            if len(poks_near) != 0 :
-                captures = 1
-                move_to = random.choice(poks_near)
+                if len(poks_near) != 0 :
+                    captures = 1
+                    move_to = random.choice(poks_near)
     # add pokemon to pokedex
     # replace pokemon with trainer and remove trainer from original space
 
 
-            elif len(empty_spaces) != 0:
+                elif len(empty_spaces) != 0:
     # replace choosen empty space with trainer and remove trainer from original space
-                captures = 0
-                move_to = random.choice(empty_spaces)
-            else:
-                move_to = []
-                captures = 0
+                    captures = 0
+                    move_to = random.choice(empty_spaces)
+                else:
+                    move_to = []
+                    captures = 0
             #Client sends its coice to server through the parameters 
-            print("Pokemons Left!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!11",num_pokemons)
-            num_pokemons = num_pokemons - 1 
-            print("AFTER sub", num_pokemons)
-            des = await stub.moveTrainer(pokemon_pb2.Decision(move2 = move_to, name = my_name,cur_pos1 = response.cur_pos, capture = captures),wait_for_ready=True)
+                print("Pokemons Left!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!11",num_pokemons)
+                print("AFTER sub", num_pokemons)
+                des = await stub.moveTrainer(pokemon_pb2.Decision(move2 = move_to, name = my_name,cur_pos1 = response.cur_pos, capture = captures),wait_for_ready=True)
+            else:
+                pass
 
 async def run_pokemon():
+    global lock
     # add all pokemon functionality
     '''
     with grpc.insecure_channel("server:50051") as channel:
@@ -154,7 +166,6 @@ async def run_pokemon():
         # calling rpc funciton and passing message your_name to it
         response =  stub.trainerCheck(pokemon_pb2.your_name(name=my_name),wait_for_ready=True)
 '''
-
            # the choice happens here 
 # the class name is the name of the service in proto file
 
@@ -172,90 +183,104 @@ async def run_pokemon():
             # calling rpc funciton and using the messages
             response =  await stub.pokemonCheck(pokemon_pb2.your_name(name=my_name),wait_for_ready=True)
             # make decision using the lists here!!!!!!!!!!!!!!!!!!!!!!!!!11
-            print(my_name)
-            if len(response.cur_posp) != 0:
+            # has lock so proceed
+            if response.loc1 == 0:
+                print(my_name)
+                if len(response.cur_posp) != 0:
 
             # convert to pairs
-                if len(response.valid_mov) != 0:
-                    valid_moves = [[response.valid_mov[i],response.valid_mov[i+1]] for i in range(0, len(response.valid_mov), 2)]
-                else:
-                    valid_moves = []
+                    if len(response.valid_mov) != 0:
+                        valid_moves = [[response.valid_mov[i],response.valid_mov[i+1]] for i in range(0, len(response.valid_mov), 2)]
+                    else:
+                        valid_moves = []
 
-                if len(response.valid_mov_before) != 0:
-                    valid_before_distance = [[response.valid_mov_before[i],response.valid_mov_before[i+1]] for i in range(0, len(response.valid_mov_before), 2)]
-                else:
-                    valid_before_distance  = []
+                    if len(response.valid_mov_before) != 0:
+                        valid_before_distance = [[response.valid_mov_before[i],response.valid_mov_before[i+1]] for i in range(0, len(response.valid_mov_before), 2)]
+                    else:
+                        valid_before_distance  = []
             
             # use the above two lists to make a choice
-                if len(valid_moves) != 0:
-                    move_to = random.choice(valid_moves)
+                    if len(valid_moves) != 0:
+                        move_to = random.choice(valid_moves)
 
-                elif len(valid_before_distance) != 0:
-                    move_to = random.choice(valid_before_distance)
+                    elif len(valid_before_distance) != 0:
+                        move_to = random.choice(valid_before_distance)
+
+                    else:
+                        move_to = []
+                    des = await stub.movePokemon(pokemon_pb2.Decision(move2 = move_to, name = my_name,cur_pos1 = list(response.cur_posp)),wait_for_ready=True)
 
                 else:
-                    move_to = []
-                des = await stub.movePokemon(pokemon_pb2.Decision(move2 = move_to, name = my_name,cur_pos1 = list(response.cur_posp)),wait_for_ready=True)
-
+                    captured = 1
             else:
-                captured = 1
+                pass
+
 class serverService(pokemon_pb2_grpc.serverServiceServicer):
     def trainerCheck(self, request, context):
         global num_pokemons
+        global lock
         poks_near = []
         your_surroundings = []
         empty_spaces = []
         empty_space = []
         poks_near_by = []
         my_pokemons = []
+        you_are_at = []
         print("Trainer host",request.name)        
-        
-        with open('board_parameters.config') as config:
-            params = config.read()
-        board_parameters = json.loads(params)
-        N = board_parameters['N']
-        P = board_parameters['P']
-        T = board_parameters['T']
+        # take lock
+        if lock == 1:
+            lock = 0
+            with open('board_parameters.config') as config:
+                params = config.read()
+            board_parameters = json.loads(params)
+            N = board_parameters['N']
+            P = board_parameters['P']
+            T = board_parameters['T']
         # getting hostname and using it at server side to check surroundings 
-        surroundings, you_are_at = check_surroundings(request.name) 
+            surroundings, you_are_at = check_surroundings(request.name) 
         # the rpc funciton stores all the values of the necessary fields
             # convert list form rpc back to pairs
         
-        if len(surroundings) != 0:
+            if len(surroundings) != 0:
 
-            your_surroundings = [[surroundings[i],surroundings[i+1]] for i in range(0, len(surroundings), 2)]
+                your_surroundings = [[surroundings[i],surroundings[i+1]] for i in range(0, len(surroundings), 2)]
 
-            for i,move in enumerate(your_surroundings):
-                if move[0] < 0 or move[0] >= N or move[1] < 0 or move[1] >= N:
-                    your_surroundings.pop(i)
+                for i,move in enumerate(your_surroundings):
+                    if move[0] < 0 or move[0] >= N or move[1] < 0 or move[1] >= N:
+                        your_surroundings.pop(i)
     #can't stay at my current postion or a position occupied by another trainer.
-                elif str(board[move[0]][move[1]]) != request.name and str(board[move[0]][move[1]])[:-1] == 'Trainer':
+                    elif str(board[move[0]][move[1]]) != request.name and str(board[move[0]][move[1]]).startswith('trainer') == True:
         #your_surroundings.remove([])
-                    your_surroundings.pop(i)
+                        your_surroundings.pop(i)
     # if there is a pokemon next to me add to list
-                elif str(board[move[0]][move[1]])[:-1] == 'pokemon':
-                    poks_near.append(your_surroundings[i])
+                    elif str(board[move[0]][move[1]]).startswith('pokemon') == True:
+                        poks_near.append(your_surroundings[i])
     # add all empty space to list
-                else:
-                    empty_spaces.append(your_surroundings[i])
+                    else:
+                        empty_spaces.append(your_surroundings[i])
             
         
-        print("Empyt Space",empty_space)
-        print("Pokemons Near",poks_near_by)
+            print("Empyt Space",empty_space)
+            print("Pokemons Near",poks_near_by)
         #flatten lists to send through rcp
-        if len(empty_spaces) != 0:
-            empty_space = [coordinate for position in empty_spaces for coordinate in position]
+            if len(empty_spaces) != 0:
+                empty_space = [coordinate for position in empty_spaces for coordinate in position]
 
-        if len(poks_near) != 0: 
-            poks_near_by = [coordinate for position in poks_near for coordinate in position]
-
-        return(pokemon_pb2.Spaces(pokemons_near = poks_near_by,emt_spaces = empty_space, n_pokemons = num_pokemons, cur_pos = you_are_at ))
+            if len(poks_near) != 0: 
+                poks_near_by = [coordinate for position in poks_near for coordinate in position]
+        
+            return(pokemon_pb2.Spaces(pokemons_near = poks_near_by,emt_spaces = empty_space, n_pokemons = num_pokemons, cur_pos = you_are_at,loc = lock ))
+        else:
+            return(pokemon_pb2.Spaces(pokemons_near = [],emt_spaces = [], n_pokemons = num_pokemons, cur_pos = [],loc = lock ))
 
     def moveTrainer(self,request, context):
         global board 
         global pokedex
         global capture_locations
         global num_pokemons
+        global lock
+        global path_tracker
+
         # need N to print board
         with open('board_parameters.config') as config:
             params = config.read()
@@ -265,12 +290,17 @@ class serverService(pokemon_pb2_grpc.serverServiceServicer):
         T = board_parameters['T']
         # change the board based on decision form client/trainer
         
-        if len(request.move2) != 0:
        # update pokedex when pokemon is captures
-            if request.capture == 1:
+        if request.capture == 1 and len(request.move2) != 0:
                 pokedex[request.name].append(board[request.move2[0]][request.move2[1]]) 
+                path_tracker[request.name].append(request.move2)
+                print(pokedex[request.name])
                 capture_locations[board[request.move2[0]][request.move2[1]]] = request.move2
+                board[request.move2[0]][request.move2[1]] = request.name
+                board[request.cur_pos1[0]][request.cur_pos1[1]] = 0
                 num_pokemons = num_pokemons - 1 
+        elif len(request.move2) != 0:
+            path_tracker[request.name].append(request.move2)
             board[request.move2[0]][request.move2[1]] = request.name
             board[request.cur_pos1[0]][request.cur_pos1[1]] = 0
             print("Trainer Moving")
@@ -280,68 +310,79 @@ class serverService(pokemon_pb2_grpc.serverServiceServicer):
         else: 
             pass
         printBoard(N)
-
+        print("Path Tracker",path_tracker)
+        # release lock
+        lock = 1
         return(pokemon_pb2.Valid(move_status = 'moved!' ))
 
     def pokemonCheck(self, request, context):
+        global lock
         print("Trainer host",request.name)        
         invalid_moves = []
         occupied_by_trainer = []
         valid_before_distance = []
         your_surroundings = []
-        with open('board_parameters.config') as config:
-            params = config.read()
-        board_parameters = json.loads(params)
-        N = board_parameters['N']
-        P = board_parameters['P']
-        T = board_parameters['T']
+        you_are_at = []
+        # take lock
+        if lock == 1:
+            lock = 0
+            with open('board_parameters.config') as config:
+                params = config.read()
+            board_parameters = json.loads(params)
+            N = board_parameters['N']
+            P = board_parameters['P']
+            T = board_parameters['T']
         # getting hostname and using it at server side to check surroundings 
-        surroundings, you_are_at = check_surroundings(request.name) 
+            surroundings, you_are_at = check_surroundings(request.name) 
 
-        if len(surroundings) != 0:
+            if len(surroundings) != 0:
         # the rpc funciton stores all the values of the necessary fields
             # convert list form rpc back to pairs
-            your_surroundings = [[surroundings[i],surroundings[i+1]] for i in range(0, len(surroundings), 2)]
-            for i,move in enumerate(your_surroundings):
-                if move[0] < 0 or move[0] >= N or move[1] < 0 or move[1] >= N:
-                    invalid_moves.append(move)
+                your_surroundings = [[surroundings[i],surroundings[i+1]] for i in range(0, len(surroundings), 2)]
+                for i,move in enumerate(your_surroundings):
+                    if move[0] < 0 or move[0] >= N or move[1] < 0 or move[1] >= N:
+                        invalid_moves.append(move)
 
-            valid_moves = [move for move in your_surroundings if move not in invalid_moves ]
+                valid_moves = [move for move in your_surroundings if move not in invalid_moves ]
 
         # remove moves with trainers
 # make of list of trainers close by
-            if valid_moves != 0:
-                for i,j in valid_moves:
+                if valid_moves != 0:
+                    for i,j in valid_moves:
     #print(i,j)
-                    if str(board[i][j])[:-1] == 'trainer':
-                        occupied_by_trainer.append([i,j])
-                        valid_moves.remove([i,j])
-                valid_before_distance = valid_moves
+                        if str(board[i][j]).startswith('trainer') == True:
+                            occupied_by_trainer.append([i,j])
+                            valid_moves.remove([i,j])
+                    valid_before_distance = valid_moves
 
 # compare valid move's distance with trainers
-                for x,y in occupied_by_trainer:
-                    for i,j in valid_moves:
-                        if abs(x-i) <=1 or abs(y-j) <= 1:
-                            valid_moves.remove([i,j])
-        else:
-            valid_before_distance = []
-            valid_moves = []
+                    for x,y in occupied_by_trainer:
+                        for i,j in valid_moves:
+                            if abs(x-i) <=1 or abs(y-j) <= 1:
+                                valid_moves.remove([i,j])
+            else:
+                valid_before_distance = []
+                valid_moves = []
         #flatten lists to send through rcp
-        if len(valid_before_distance) != 0:
-            valid_before_dist = [coordinate for position in valid_before_distance for coordinate in position]
+            if len(valid_before_distance) != 0:
+                valid_before_dist = [coordinate for position in valid_before_distance for coordinate in position]
+            else:
+                valid_before_dist = []
+
+            if len(valid_moves) != 0: 
+                valid_movs = [coordinate for position in valid_moves for coordinate in position]
+            else: 
+                valid_movs = []
+
+            return(pokemon_pb2.PSpaces(valid_mov = valid_movs,valid_mov_before = valid_before_dist, cur_posp = you_are_at, loc1 = lock))
         else:
-            valid_before_dist = []
 
-        if len(valid_moves) != 0: 
-            valid_movs = [coordinate for position in valid_moves for coordinate in position]
-        else: 
-            valid_movs = []
-
-        return(pokemon_pb2.PSpaces(valid_mov = valid_movs,valid_mov_before = valid_before_dist, cur_posp = you_are_at))
+            return(pokemon_pb2.PSpaces(valid_mov = [],valid_mov_before = [], cur_posp = [], loc1 = lock))
 
     def movePokemon(self,request,context):
         global num_pokemons
         global board 
+        global path_tracker
         # need N to print board
         with open('board_parameters.config') as config:
             params = config.read()
@@ -352,6 +393,7 @@ class serverService(pokemon_pb2_grpc.serverServiceServicer):
         # change the board based on decision form client/trainer
         if len(request.move2) != 0:
 
+            path_tracker[request.name].append(request.move2)
             board[request.move2[0]][request.move2[1]] = request.name
             board[request.cur_pos1[0]][request.cur_pos1[1]] = 0
             print("Pokemon Moving")
@@ -359,8 +401,11 @@ class serverService(pokemon_pb2_grpc.serverServiceServicer):
             pass
         print("*****************************************************************8")
         printBoard(N)
-        print("NUMBER OF POKS", num_pokemons)
+        # release loc
+        lock = 1
+        print("Path Tracker",path_tracker)
         return(pokemon_pb2.Valid(move_status = 'moved!' ))
+
     def captured(self, request, context):
         pass
 
@@ -370,6 +415,8 @@ class serverService(pokemon_pb2_grpc.serverServiceServicer):
 global num_pokemons
 async def run_server():
     global num_pokemons
+    global lock
+    lock = 1
     with open('board_parameters.config') as config:
         params = config.read()
     board_parameters = json.loads(params)
@@ -398,10 +445,10 @@ def main():
     name = socket.gethostname()
     if name == 'server':
         asyncio.run(run_server())
-    if name[:-1] == 'trainer':
+    if name.startswith('trainer') == True:
         asyncio.run(run_trainer())
     
-    if name[:-1] == 'pokemon':
+    if name.startswith('pokemon') == True:
         asyncio.run(run_pokemon())
 
 if __name__ == '__main__':
