@@ -113,4 +113,4 @@ Valid
 
 ## Output
 
-![Alt Text](https://github.com/CurSpace/cs5113fa22-project/blob/main/gif_AdobeExpress%20(3).gif)
+![Alt Text](https://github.com/CurSpace/cs5113fa22-project/blob/main/media/demo.gif)
