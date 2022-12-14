@@ -3,6 +3,7 @@ syntax = "proto3";
 service serverService{
 	rpc trainerCheck(your_name) returns(Spaces);
 	rpc moveTrainer(Decision) returns(Valid);
+	rpc movePokemon(Decision) returns(Valid);
 	rpc pokemonCheck(your_name) returns(PSpaces);
 	rpc captured(Position) returns(cFlag);
 	rpc reportMove(Position) returns(Valid);
@@ -19,6 +20,7 @@ message Decision{
 	repeated int32 move2 = 1;
 	string name = 2; 
 	repeated int32 cur_pos1 = 3;
+	int32 capture = 4;
 }
 message Position{
 	int32 row = 1;
@@ -29,7 +31,6 @@ message Space{
 	int32 list_ele = 1; 
 }
 
-// 2nd array of surroundings and number of total pokemons on the board
 message Spaces{
 	repeated int32 pokemons_near = 1;
 	repeated int32 emt_spaces = 2 ;
@@ -37,10 +38,10 @@ message Spaces{
 	repeated int32 cur_pos = 4;
 }
 
-message Spaces{
+message PSpaces{
 	repeated int32 valid_mov = 1;
-	repeated int32 vlaid_mov_before = 2 ;
-	repeated int32 cur_posp = 4;
+	repeated int32 valid_mov_before = 2 ;
+	repeated int32 cur_posp = 3;
 }
 message Valid{
 	string move_status = 1;
