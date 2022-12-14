@@ -45,13 +45,6 @@ def createBoard(N):
                 pokedex[list(board_pieces.keys())[count]]= [] 
             count = count + 1
 
-    # store pokedex and path_tracker in a file for later use
-    with open("pokedex.config",'w') as config1:
-            config1.write(json.dumps(pokedex))
-
-    with open("pokedex.config",'w') as config2:
-            config2.write(json.dumps(path_tracker))
-
 
 # function to display the board
 def printBoard(N):
@@ -387,8 +380,6 @@ class serverService(pokemon_pb2_grpc.serverServiceServicer):
         else:
             pass
         printBoard(N)
-        print("Pokedex:", pokedex)
-        print("Captured Locations:", capture_locations)
         print("Path:", path_tracker)
         # release loc
         lock = 1
