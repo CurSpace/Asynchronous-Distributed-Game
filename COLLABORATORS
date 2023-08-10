@@ -1,9 +1,0 @@
-Aditya Rohan Singh, Aditya.Rohan.Singh-1@ou.edu, Student in CS5113
-
-Helped under stand the flow of the code to get N,T and P as argrments and how to dynamicall generate containers. Helped understand that the spacing in docker-compose file was causing issues. Suggest to test with 10 emojis at first.
-Also pointed to asyncio gRPC for asynchronous messaging.
-
-https://stackoverflow.com/questions/52601350/insert-value-at-random-place-in-2d-list #helped randomly inserting the pokemon and trainers to the board
-
-https://grpc.github.io/grpc/python/grpc_asyncio.html # using asyncio gRPC
-
